@@ -1,26 +1,153 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: #090D1A;
+  --color-ink2: #111827;
+  --color-violet: #7C3AED;
+  --color-violet-dim: #5B21B6;
+  --color-violet-glow: rgba(124,58,237,0.35);
+  --color-amber: #F59E0B;
+  --color-amber-dim: rgba(245,158,11,0.15);
+  --color-fg: #F0EDFF;
+  --color-fg2: rgba(240,237,255,0.55);
+  --color-fg3: rgba(240,237,255,0.28);
+  --color-border-custom: rgba(124,58,237,0.2);
+  --color-border2: rgba(240,237,255,0.08);
+  --color-card-custom: rgba(255,255,255,0.04);
+
+  --color-background: var(--color-ink);
+  --color-foreground: var(--color-fg);
+  --font-sans: var(--font-inter), 'Inter', sans-serif;
+  --font-heading: var(--font-syne), 'Syne', sans-serif;
+  --color-sidebar-ring: var(--violet);
+  --color-sidebar-border: var(--border2);
+  --color-sidebar-accent-foreground: var(--fg);
+  --color-sidebar-accent: var(--card-custom);
+  --color-sidebar-primary-foreground: #fff;
+  --color-sidebar-primary: var(--violet);
+  --color-sidebar-foreground: var(--fg2);
+  --color-sidebar: var(--ink2);
+  --color-chart-5: #8B5CF6;
+  --color-chart-4: #A78BFA;
+  --color-chart-3: #6D28D9;
+  --color-chart-2: #7C3AED;
+  --color-chart-1: #5B21B6;
+  --color-ring: var(--violet);
+  --color-input: var(--border2);
+  --color-border: var(--border-custom);
+  --color-destructive: #EF4444;
+  --color-accent-foreground: var(--fg);
+  --color-accent: var(--card-custom);
+  --color-muted-foreground: var(--fg3);
+  --color-muted: var(--card-custom);
+  --color-secondary-foreground: var(--fg);
+  --color-secondary: var(--ink2);
+  --color-primary-foreground: #fff;
+  --color-primary: var(--violet);
+  --color-popover-foreground: var(--fg);
+  --color-popover: var(--ink2);
+  --color-card-foreground: var(--fg);
+  --color-card: var(--ink2);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius: 0.625rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: #090D1A;
+  --foreground: #F0EDFF;
+  --card: rgba(255,255,255,0.04);
+  --card-foreground: #F0EDFF;
+  --popover: #111827;
+  --popover-foreground: #F0EDFF;
+  --primary: #7C3AED;
+  --primary-foreground: #fff;
+  --secondary: #111827;
+  --secondary-foreground: #F0EDFF;
+  --muted: rgba(255,255,255,0.04);
+  --muted-foreground: rgba(240,237,255,0.28);
+  --accent: rgba(255,255,255,0.04);
+  --accent-foreground: #F0EDFF;
+  --destructive: #EF4444;
+  --border: rgba(124,58,237,0.2);
+  --input: rgba(240,237,255,0.08);
+  --ring: #7C3AED;
+  --radius: 0.625rem;
+  --chart-1: #5B21B6;
+  --chart-2: #7C3AED;
+  --chart-3: #6D28D9;
+  --chart-4: #A78BFA;
+  --chart-5: #8B5CF6;
+  --sidebar: #111827;
+  --sidebar-foreground: rgba(240,237,255,0.55);
+  --sidebar-primary: #7C3AED;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: rgba(255,255,255,0.04);
+  --sidebar-accent-foreground: #F0EDFF;
+  --sidebar-border: rgba(240,237,255,0.08);
+  --sidebar-ring: #7C3AED;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Grain overlay */
+.grain-overlay::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.6;
+}
+
+/* Glow orb */
+.glow-orb {
+  position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 500px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(124,58,237,0.18) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Pulse ring animation */
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(124,58,237,0.45); }
+  70%  { box-shadow: 0 0 0 10px rgba(124,58,237,0); }
+  100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.5s ease-out infinite;
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.animate-blink {
+  animation: blink .85s step-end infinite;
+}
+
+@keyframes sp {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-custom {
+  animation: sp .65s linear infinite;
 }
