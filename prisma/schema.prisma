@@ -1,0 +1,169 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  IN_PROGRESS
+  PUBLISHED
+  FAILED
+}
+
+enum Platform {
+  LINKEDIN
+  INSTAGRAM
+  TWITTER
+  TIKTOK
+  PINTEREST
+}
+
+model User {
+  id               String            @id // Clerk ID
+  email            String            @unique
+  firstName        String?
+  lastName         String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  memberships      WorkspaceMember[]
+  posts            Post[]
+  auditLogs        AuditLog[]
+}
+
+model Workspace {
+  id               String            @id @default(uuid())
+  name             String
+  logo             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  members          WorkspaceMember[]
+  posts            Post[]
+  brandVoices      BrandVoice[]
+  subscription     Subscription?
+  auditLogs        AuditLog[]
+}
+
+model WorkspaceMember {
+  id               String            @id @default(uuid())
+  workspaceId      String
+  userId           String
+  role             Role              @default(EDITOR)
+  joinedAt         DateTime          @default(now())
+  
+  workspace        Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+model Subscription {
+  id                     String      @id @default(uuid())
+  workspaceId            String      @unique
+  stripeCustomerId       String?     @unique
+  stripeSubscriptionId   String?     @unique
+  plan                   String      @default("FREE") // FREE, PRO, AGENCY, ENTERPRISE
+  status                 String      @default("ACTIVE")
+  currentPeriodEnd       DateTime?
+  
+  workspace              Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model BrandVoice {
+  id               String            @id @default(uuid())
+  workspaceId      String
+  name             String
+  guidelines       String
+  referenceTexts   String[]
+  createdAt        DateTime          @default(now())
+  
+  workspace        Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model Post {
+  id               String            @id @default(uuid())
+  workspaceId      String
+  userId           String
+  status           PostStatus        @default(DRAFT)
+  platforms        Platform[]
+  scheduledAt      DateTime?
+  publishedAt      DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  
+  workspace        Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user             User              @relation(fields: [userId], references: [id])
+  captions         Caption[]
+  images           GeneratedImage[]
+  analytics        AnalyticsReport[]
+
+  @@index([workspaceId, scheduledAt])
+  @@index([status])
+}
+
+model Caption {
+  id               String            @id @default(uuid())
+  postId           String
+  topic            String
+  generatedText    String            @db.Text
+  tone             String?
+  createdAt        DateTime          @default(now())
+  
+  post             Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+model GeneratedImage {
+  id               String            @id @default(uuid())
+  postId           String
+  prompt           String            @db.Text
+  url              String            @db.Text
+  createdAt        DateTime          @default(now())
+  
+  post             Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+model AnalyticsReport {
+  id               String            @id @default(uuid())
+  postId           String
+  platform         Platform
+  reach            Int               @default(0)
+  engagement       Int               @default(0)
+  clicks           Int               @default(0)
+  updatedAt        DateTime          @updatedAt
+  
+  post             Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, platform])
+}
+
+model AuditLog {
+  id               String            @id @default(uuid())
+  workspaceId      String
+  userId           String
+  action           String
+  details          String            @db.Text
+  createdAt        DateTime          @default(now())
+  
+  workspace        Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user             User              @relation(fields: [userId], references: [id])
+
+  @@index([workspaceId])
+}

@@ -10,14 +10,24 @@ import {
   IconInbox,
   IconLogout,
   IconSparkles,
+  IconSettings,
+  IconMessageCircle,
+  IconPhoto,
+  IconTemplate,
+  IconShield,
 } from "@tabler/icons-react";
 
 const sidebarLinks = [
   { label: "Overview", href: "/dashboard", icon: IconLayoutDashboard },
   { label: "Compose", href: "/dashboard/compose", icon: IconEdit },
+  { label: "AI Carousel", href: "/dashboard/carousel", icon: IconTemplate },
   { label: "Schedule", href: "/dashboard/schedule", icon: IconCalendarEvent },
+  { label: "AI Chat", href: "/dashboard/chat", icon: IconMessageCircle },
+  { label: "Media Library", href: "/dashboard/media", icon: IconPhoto },
   { label: "Analytics", href: "/dashboard/analytics", icon: IconChartBar },
   { label: "Inbox", href: "/dashboard/inbox", icon: IconInbox },
+  { label: "Settings", href: "/dashboard/settings", icon: IconSettings },
+  { label: "Admin Panel", href: "/dashboard/admin", icon: IconShield },
 ];
 
 export default function DashboardLayout({
